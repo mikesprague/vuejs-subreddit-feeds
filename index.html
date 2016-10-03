@@ -9,7 +9,7 @@
     <title>Simple Vue.js Subreddit feed explorer demo | &lt;/&gt; by Mike Sprague</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../shared/css/styles.css">
+    <link rel="stylesheet" href="../projects/shared/css/styles.css">
     <style>
       .thumbnail {
         width: 80px;
@@ -35,7 +35,7 @@
   <body>
 
     <header class="container page-header">
-      <h1>Simple Vue.js Subreddit feed explorer demo</h1>
+      <h1>Simple Vue.js Subreddit Feed Explorer Demo</h1>
     </header>
 
     <div class="container" id="app">
@@ -57,7 +57,7 @@
 
     <template id="subreddit">
       <div class="col-sm-4">
-        <h2>{{ name | capitalize }}</h2>
+        <h2>{{ name | capitalized }}</h2>
         <div v-if="!posts.length"><loading></loading></div>
         <ul class="list-group">
           <li v-for="obj in posts" class="list-group-item">
@@ -75,17 +75,17 @@
         </a>
         <br>
         <div class="btn-group btn-group-xs" role="group">
-          <a class="btn btn-xs btn-danger" href="http://reddit.com{{ item.data.permalink }}" title="Vote"><i class="fa fa-thumbs-down"></i></a>
-          <a class="btn btn-xs btn-success" href="http://reddit.com{{ item.data.permalink }}" title="Vote"><i class="fa fa-thumbs-up"></i></a>
+          <a class="btn btn-xs btn-danger" :href="'http://reddit.com' + item.data.permalink" title="Vote"><i class="fa fa-thumbs-down"></i></a>
+          <a class="btn btn-xs btn-success" :href="'http://reddit.com' + item.data.permalink" title="Vote"><i class="fa fa-thumbs-up"></i></a>
           <a class="btn btn-default btn-xs active" disabled="disabled">{{item.data.score}}</a>
         </div>
-        <a class="btn btn-primary btn-xs" href="http://reddit.com{{ item.data.permalink }}" title="Go to discussion"><i class="fa fa-comments"></i> {{item.data.num_comments}}</a>
+        <a class="btn btn-primary btn-xs" :href="'http://reddit.com' + item.data.permalink" title="Go to discussion"><i class="fa fa-comments"></i> {{item.data.num_comments}}</a>
       </div>
     </template>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.28/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.1/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.0.3/vue-resource.js"></script>
-    <script src="../shared/js/components.js"></script>
+    <script src="../projects/shared/js/components.js"></script>
     <script>
       var subreddit = Vue.component( "subreddit", {
         template: "#subreddit",
@@ -97,8 +97,11 @@
         },
         created: function() {
           this.$http.get( "https://www.reddit.com/r/"+ this.name +"/top.json?limit=5" )
-          .then( function( resp ) {
-            this.posts = resp.data.data.children;
+          .then( function( response ) {
+            return response.json();
+          })
+          .then( function( json ) {
+            this.posts = json.data.children;
           });
         }
       });
@@ -106,6 +109,10 @@
       var post = Vue.component( "post", {
         template: "#post",
         props: ["item"]
+      });
+
+      Vue.filter( "capitalized", function( str ) {
+        return str[0].toUpperCase() + str.slice(1);
       });
 
       Vue.filter( "truncate", function( value ) {
