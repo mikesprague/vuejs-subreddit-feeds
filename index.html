@@ -57,7 +57,7 @@
 
     <template id="subreddit">
       <div class="col-sm-4">
-        <h2>{{ name | capitalized }}</h2>
+        <h2>{{ name | textcapitalized }}</h2>
         <div v-if="!posts.length"><loading></loading></div>
         <ul class="list-group">
           <li v-for="obj in posts" class="list-group-item">
@@ -85,6 +85,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.1/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.0.3/vue-resource.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.4/lodash.min.js"></script>
     <script src="https://vuejs.mikesprague.me/shared/js/components.js"></script>
     <script>
       var subreddit = Vue.component( "subreddit", {
@@ -111,17 +112,15 @@
         props: ["item"]
       });
 
-      Vue.filter( "capitalized", function( str ) {
-        return str[0].toUpperCase() + str.slice(1);
+      Vue.filter( "textcapitalized", function( str ) {
+        return _.capitalize( str );
       });
 
-      Vue.filter( "truncate", function( value ) {
-        var length = 60;
-        if ( value.length <= length ) {
-          return value;
-        } else {
-          return value.substring( 0, length ) + "...";
-        }
+      Vue.filter( "truncate", function( str ) {
+        return _.truncate( str,  {
+          "length": 60,
+          "omission": "..."
+        });
       });
 
       var footer = new Vue({
