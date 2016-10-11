@@ -69,17 +69,17 @@
 
     <template id="post">
       <div>
-        <a :href="item.data.url" target="_blank"><img :alt="item.data.title" class="img-thumbnail pull-left thumbnail" :src="item.data.thumbnail"></a>
+        <a :href="item.data.url" target="_blank"><img :alt="item.data.title" class="img-thumbnail pull-left thumbnail" :src="thumbnailOverHttps"></a>
         <a :href="item.data.url" :title="item.data.title" target="_blank">
           {{ item.data.title | truncate }}
         </a>
         <br>
         <div class="btn-group btn-group-xs" role="group">
-          <a class="btn btn-xs btn-danger" :href="'http://reddit.com' + item.data.permalink" title="Vote"><i class="fa fa-thumbs-down"></i></a>
-          <a class="btn btn-xs btn-success" :href="'http://reddit.com' + item.data.permalink" title="Vote"><i class="fa fa-thumbs-up"></i></a>
+          <a class="btn btn-xs btn-danger" :href="'https://reddit.com' + item.data.permalink" title="Vote"><i class="fa fa-thumbs-down"></i></a>
+          <a class="btn btn-xs btn-success" :href="'https://reddit.com' + item.data.permalink" title="Vote"><i class="fa fa-thumbs-up"></i></a>
           <a class="btn btn-default btn-xs active" disabled="disabled">{{item.data.score}}</a>
         </div>
-        <a class="btn btn-primary btn-xs" :href="'http://reddit.com' + item.data.permalink" title="Go to discussion"><i class="fa fa-comments"></i> {{item.data.num_comments}}</a>
+        <a class="btn btn-primary btn-xs" :href="'https://reddit.com' + item.data.permalink" title="Go to discussion"><i class="fa fa-comments"></i> {{item.data.num_comments}}</a>
       </div>
     </template>
 
@@ -109,7 +109,12 @@
 
       var post = Vue.component( "post", {
         template: "#post",
-        props: ["item"]
+        props: ["item"],
+        computed: {
+          thumbnailOverHttps: function() {
+            return this.item.data.thumbnail.replace( "http:", "https:" );
+          }
+        }
       });
 
       Vue.filter( "textcapitalized", function( str ) {
